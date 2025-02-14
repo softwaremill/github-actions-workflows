@@ -25,7 +25,7 @@ on:
 
 jobs:
   ci:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-24.04
     env:
       JAVA_OPTS: ${{ inputs.java-opts }}
       STTP_NATIVE: ${{inputs.sttp-native}}
@@ -38,14 +38,6 @@ jobs:
         distribution: 'temurin'
         java-version: ${{inputs.java-version}}
         cache: 'sbt'
-    - name: Cache sbt
-      uses: actions/cache@v2
-      with:
-        path: |
-          ~/.sbt
-          ~/.ivy2/cache
-          ~/.coursier
-        key: sbt-cache-${{ runner.os }}-${{ hashFiles('project/build.properties') }}
     - name: Install libidn11-dev
       if: ${{ inputs.install-libidn11 }}
       run: sudo apt-get install libidn11-dev
@@ -58,10 +50,3 @@ jobs:
       run: sbt -v compile
     - name: Test
       run: sbt -v test
-    - name: Cleanup
-      run: |
-        rm -rf "$HOME/.ivy2/local" || true
-        find $HOME/.ivy2/cache                       -name "ivydata-*.properties" -delete || true
-        find $HOME/.ivy2/cache                       -name "*-LM-SNAPSHOT*"       -delete || true
-        find $HOME/.cache/coursier/v1                -name "ivydata-*.properties" -delete || true
-        find $HOME/.sbt                              -name "*.lock"               -delete || true

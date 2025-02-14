@@ -87,9 +87,9 @@ This workflow is responsible for running Scala Steward.
 
 #### List of secrets
 
-| Name              | Description                                      |
-|-------------------|--------------------------------------------------|
-| repo-github-token | Github token with write access to the repository |
+| Name              | Description |
+|-------------------|-------------|
+| repo-github-token | -           |
 
 ### List of repositories using this workflow
 
@@ -128,11 +128,11 @@ It uses multiple secrets so clause `secrets: inherit` has to be added to the wor
 
 #### List of input params
 
-| Name         | Description                                                   | Required | Default | Example                             |
-|--------------|---------------------------------------------------------------|----------|---------|-------------------------------------|
-| java-version | Java version used in the workflow                             | Yes      | '11'    | '21'                                |
-| java-opts    | Java options used in the workflow                             | No       | ""      | "-Xmx3000M -Dsbt.task.timings=true" |
-| sttp-native  | Flag indicating if the sttp-native module should be published | No       | 0       | 1                                   |
+| Name         | Description                                                                     | Required | Default | Example                             |
+|--------------|---------------------------------------------------------------------------------|----------|---------|-------------------------------------|
+| java-version | Java version used in the workflow                                               | Yes      | '11'    | '21'                                |
+| java-opts    | Java options used in the workflow                                               | No       | ""      | "-Xmx3000M -Dsbt.task.timings=true" |
+| sttp-native  | Flag indicating if the sttp-native should be included in the aggregate projects | No       | 0       | 1                                   |
 
 ### List of repositories using this workflow
 
@@ -163,10 +163,10 @@ This workflow is responsible for running MiMa (binary compatibility checker).
 
 #### List of input params
 
-| Name | Description | Required | Default | Example |
-|--------------|-----------------------------------|---------- --|---------|-------------------------------------|
-| java-version | Java version used in the workflow | Yes | '11' | '21' |
-| java-opts | Java options used in the workflow | No | ""      | "-Xmx3000M -Dsbt.task.timings=true" |
+| Name         | Description                       | Required | Default | Example                             |
+|--------------|-----------------------------------|----------|---------|-------------------------------------|
+| java-version | Java version used in the workflow | Yes      | '11'    | '21'                                |
+| java-opts    | Java options used in the workflow | No       | ""      | "-Xmx3000M -Dsbt.task.timings=true" |
 
 ### List of repositories using this workflow
 
@@ -196,13 +196,13 @@ This workflow is responsible for building Scala projects.
 
 #### List of input params
 
-| Name             | Description                                                   | Required | Default | Example                             |
-|------------------|---------------------------------------------------------------|----------|---------|-------------------------------------|
-| java-version     | Java version used in the workflow                             | Yes      | '11'    | '21'                                |
-| java-opts        | Java options used in the workflow                             | No       | ""      | "-Xmx3000M -Dsbt.task.timings=true" |
-| sttp-native      | Flag indicating if the sttp-native module should be published | No       | 0       | 1                                   |
-| install-libidn11 | Flag indicating if the libidn11 library should be installed   | No       | false   | true                                |
-| install-libidn2  | Flag indicating if the libidn2 library should be installed    | No       | false   | true                                |
+| Name             | Description                                                                     | Required | Default | Example                             |
+|------------------|---------------------------------------------------------------------------------|----------|---------|-------------------------------------|
+| java-version     | Java version used in the workflow                                               | Yes      | '11'    | '21'                                |
+| java-opts        | Java options used in the workflow                                               | No       | ""      | "-Xmx3000M -Dsbt.task.timings=true" |
+| sttp-native      | Flag indicating if the sttp-native should be included in the aggregate projects | No       | 0       | 1                                   |
+| install-libidn11 | Flag indicating if the libidn11 library should be installed                     | No       | false   | true                                |
+| install-libidn2  | Flag indicating if the libidn2 library should be installed                      | No       | false   | true                                |
 
 ### List of repositories using this workflow
 
