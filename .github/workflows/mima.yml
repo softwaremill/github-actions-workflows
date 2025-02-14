@@ -1,0 +1,45 @@
+name: Mima
+
+on:
+  workflow_call:
+    inputs:
+      java-version:
+        required: true
+        type: string
+      java-opts:
+        required: false
+        type: string
+        default: ""
+
+jobs:
+  mima:
+    runs-on: ubuntu-24.04
+    env:
+      JAVA_OPTS: ${{ inputs.java-opts }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # checkout tags so that dynver works properly (we need the version for MiMa)
+      - name: Set up JDK
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: ${{ inputs.java-version }}
+      - name: Cache sbt
+        uses: actions/cache@v2
+        with:
+          path: |
+            ~/.sbt
+            ~/.ivy2/cache
+            ~/.coursier
+          key: sbt-cache-${{ runner.os }}-${{ hashFiles('project/build.properties') }}
+      - name: Check MiMa # disable for major releases
+        run: sbt -v mimaReportBinaryIssues
+      - name: Cleanup
+        run: |
+          rm -rf "$HOME/.ivy2/local" || true
+          find $HOME/.ivy2/cache                       -name "ivydata-*.properties" -delete || true
+          find $HOME/.ivy2/cache                       -name "*-LM-SNAPSHOT*"       -delete || true
+          find $HOME/.cache/coursier/v1                -name "ivydata-*.properties" -delete || true
+          find $HOME/.sbt                              -name "*.lock"               -delete || true
