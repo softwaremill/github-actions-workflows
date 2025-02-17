@@ -27,5 +27,6 @@ jobs:
           distribution: 'temurin'
           java-version: ${{ inputs.java-version }}
           cache: 'sbt'
+      - uses: sbt/setup-sbt@v1
       - name: Check MiMa # disable for major releases
         run: sbt -v mimaReportBinaryIssues

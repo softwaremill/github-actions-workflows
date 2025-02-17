@@ -287,3 +287,7 @@ This workflow is responsible for dispatching rebase when it gets a command `/reb
 |--------------------------------------------------|------------------------------------------------------------------------------------------------------------------|
 | [tapir](https://github.com/softwaremill/tapiros) | [scala-steward.yml](https://github.com/softwaremill/tapir/blob/master/.github/workflows/rebase-cmd-dispatch.yml) |
 | [ox](https://github.com/softwaremill/ox)         | [scala-steward.yml](https://github.com/softwaremill/ox/blob/master/.github/workflows/rebase-cmd-dispatch.yml)    |
+
+
+## Remarks
+- All workflows using sbt with ubuntu 24.04 need to add `setup-sbt` step because sbt was removed from the image as described [here](https://github.com/sbt/setup-sbt?tab=readme-ov-file#december-2024). 

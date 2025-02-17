@@ -31,6 +31,7 @@ jobs:
           distribution: 'temurin'
           java-version: ${{inputs.java-version}}
           cache: 'sbt'
+      - uses: sbt/setup-sbt@v1
       - name: Compile
         run: sbt compile
       - name: Publish artifacts
