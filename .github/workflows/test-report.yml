@@ -1,0 +1,17 @@
+name: Label
+
+on:
+  workflow_call:
+
+jobs:
+  report:
+    runs-on: ubuntu-24.04
+    # If the workflow run was skipped or cancelled this action would fail, generating a test report is unnecessary.
+    if: ${{ github.event.workflow_run.conclusion == 'success' || github.event.workflow_run.conclusion == 'failure' }}
+    steps:
+      - uses: dorny/test-reporter@v1
+        with:
+          artifact: '/tests-results(.*)/'
+          name: 'Test report for $1'
+          path: '**/test-reports/TEST*.xml'
+          reporter: java-junit

@@ -10,6 +10,9 @@ Generic Github Actions workflows used in SoftwareMill projects.
 4. [Publish Release](#publish-release)
 5. [Mima](#mima)
 6. [Build Scala](#build-scala)
+7. [Test Report](#test-report)
+8. [Rebase cmd](#rebase-cmd)
+9. [Rebase cmd dispatch](#rebase-cmd-dispatch)
 
 ## [Auto Merge](./.github/workflows/auto-merge.yml)
 
@@ -213,3 +216,74 @@ This workflow is responsible for building Scala projects.
 | [sttp-model](https://github.com/softwaremill/sttp-model)     | [ci.yml](https://github.com/softwaremill/sttp-model/blob/master/.github/workflows/ci.yml)   |
 | [sttp-apispec](https://github.com/softwaremill/sttp-apispec) | [ci.yml](https://github.com/softwaremill/sttp-apispec/blob/master/.github/workflows/ci.yml) |
 | [kmq](https://github.com/softwaremill/kmq)                   | [ci.yml](https://github.com/softwaremill/kmq/blob/master/.github/workflows/ci.yml)          |
+
+## [Test Report](./.github/workflows/test-report.yml)
+
+This workflow is responsible for generating test reports.
+
+### Usage
+
+```yaml
+  call-workflow-test-report:
+    uses: softwaremill/github-actions-workflows/.github/workflows/test-report.yml@main
+```
+
+### List of repositories using this workflow
+
+| Repository                                                 | Files                                                                                                          |
+|------------------------------------------------------------|----------------------------------------------------------------------------------------------------------------|
+| [sttp-openai](https://github.com/softwaremill/sttp-openai) | [scala-steward.yml](https://github.com/softwaremill/sttp-openai/blob/master/.github/workflows/test-report.yml) |
+| [tapir](https://github.com/softwaremill/tapiros)           | [scala-steward.yml](https://github.com/softwaremill/tapir/blob/master/.github/workflows/test-report.yml)       |
+| [ox](https://github.com/softwaremill/ox)                   | [scala-steward.yml](https://github.com/softwaremill/ox/blob/master/.github/workflows/test-report.yml)          |
+
+## [Rebase cmd](./.github/workflows/rebase-cmd.yml)
+
+This workflow is responsible for rebasing pull requests and adding a comment to them.
+
+### Usage
+
+```yaml
+  call-workflow-rebase:
+    uses: softwaremill/github-actions-workflows/.github/workflows/rebase-cmd.yml@main
+    secrets:
+      repo-github-token: ${{ secrets.REPO_GITHUB_TOKEN }}
+```
+
+#### List of secrets
+
+| Name              | Description |
+|-------------------|-------------|
+| repo-github-token | -           |
+
+### List of repositories using this workflow
+
+| Repository                                       | Files                                                                                                   |
+|--------------------------------------------------|---------------------------------------------------------------------------------------------------------|
+| [tapir](https://github.com/softwaremill/tapiros) | [scala-steward.yml](https://github.com/softwaremill/tapir/blob/master/.github/workflows/rebase-cmd.yml) |
+| [ox](https://github.com/softwaremill/ox)         | [scala-steward.yml](https://github.com/softwaremill/ox/blob/master/.github/workflows/rebase-cmd.yml)    |
+
+## [Rebase cmd dispatch](./.github/workflows/rebase-cmd-dispatch.yml)
+
+This workflow is responsible for dispatching rebase when it gets a command `/rebase`.
+
+### Usage
+
+```yaml
+  call-workflow-rebase-cmd-dispatch:
+    uses: softwaremill/github-actions-workflows/.github/workflows/rebase-cmd-dispatch.yml@main
+    secrets:
+      repo-github-token: ${{ secrets.REPO_GITHUB_TOKEN }}
+```
+
+#### List of secrets
+
+| Name              | Description |
+|-------------------|-------------|
+| repo-github-token | -           |
+
+### List of repositories using this workflow
+
+| Repository                                       | Files                                                                                                            |
+|--------------------------------------------------|------------------------------------------------------------------------------------------------------------------|
+| [tapir](https://github.com/softwaremill/tapiros) | [scala-steward.yml](https://github.com/softwaremill/tapir/blob/master/.github/workflows/rebase-cmd-dispatch.yml) |
+| [ox](https://github.com/softwaremill/ox)         | [scala-steward.yml](https://github.com/softwaremill/ox/blob/master/.github/workflows/rebase-cmd-dispatch.yml)    |

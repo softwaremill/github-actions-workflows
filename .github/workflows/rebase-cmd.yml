@@ -1,0 +1,25 @@
+name: Label
+
+on:
+  workflow_call:
+    secrets:
+      repo-github-token:
+        required: true
+
+jobs:
+  rebase:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: peter-evans/rebase@v3
+        id: rebase
+        with:
+          token: ${{ secrets.repo-github-token }} # required so that CI will be triggered, see: https://github.com/peter-evans/create-pull-request/issues/48
+          head: ${{ github.event.client_payload.pull_request.head.label }}
+      - name: Add reaction
+        if: steps.rebase.outputs.rebased-count == 1
+        uses: peter-evans/create-or-update-comment@v4
+        with:
+          token: ${{ secrets.repo-github-token }}
+          repository: ${{ github.event.client_payload.github.payload.repository.full_name }}
+          comment-id: ${{ github.event.client_payload.github.payload.comment.id }}
+          reaction-type: hooray

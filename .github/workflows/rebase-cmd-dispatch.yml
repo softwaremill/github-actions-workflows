@@ -1,0 +1,21 @@
+name: Label
+
+on:
+  workflow_call:
+    secrets:
+      repo-github-token:
+        required: true
+
+jobs:
+  slashCommandDispatch:
+    # to fast-skip for typical, non-rebase comments
+    if: contains(github.event.comment.body, '/rebase')
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Slash Command Dispatch
+        uses: peter-evans/slash-command-dispatch@v4
+        with:
+          token: ${{ secrets.repo-github-token }}
+          commands: rebase
+          permission: write
+          issue-type: pull-request
