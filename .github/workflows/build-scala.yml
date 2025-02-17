@@ -47,7 +47,14 @@ jobs:
       run: |
         sudo apt-get update
         sudo apt-get install libidn2-dev
+    - name: Check formatting
+      run: sbt -v scalafmtCheckAll
     - name: Compile
       run: sbt -v compile
     - name: Test
       run: sbt -v test
+    - uses: actions/upload-artifact@v4  # upload test results
+      if: success() || failure()        # run this step even if previous step failed
+      with:
+        name: 'tests-results'
+        path: '**/test-reports/TEST*.xml'
