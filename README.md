@@ -21,7 +21,7 @@ This workflow is responsible for merging pull requests that are ready to be merg
 ### Usage
 
 ```yaml
-  call-workflow-auto-merge:
+  auto-merge:
     uses: softwaremill/github-actions-workflows/.github/workflows/auto-merge.yml@main
 ```
 
@@ -48,7 +48,7 @@ steward and this file belongs to a whitelist specified by `labeler.yml`
 ### Usage
 
 ```yaml
-  call-workflow-label:
+  label:
     uses: softwaremill/github-actions-workflows/.github/workflows/label.yml@main
 ```
 
@@ -74,7 +74,7 @@ This workflow is responsible for running Scala Steward.
 ### Usage
 
 ```yaml
-  call-workflow-scala-steward:
+  scala-steward:
     uses: softwaremill/github-actions-workflows/.github/workflows/scala-steward.yml@main
     with:
       java-version: '11'
@@ -86,7 +86,7 @@ This workflow is responsible for running Scala Steward.
 
 | Name         | Description                       | Required | Default | Example |
 |--------------|-----------------------------------|----------|---------|---------|
-| java-version | Java version used in the workflow | Yes      | '11'    | '21'    |
+| java-version | Java version used in the workflow | No       | '11'    | '21'    |
 
 #### List of secrets
 
@@ -120,7 +120,7 @@ It uses multiple secrets so clause `secrets: inherit` has to be added to the wor
 ### Usage
 
 ```yaml
-  call-workflow-publish-release:
+  publish-release:
     uses: softwaremill/github-actions-workflows/.github/workflows/publish-release.yml@main
     secrets: inherit
     with:
@@ -133,7 +133,7 @@ It uses multiple secrets so clause `secrets: inherit` has to be added to the wor
 
 | Name         | Description                                                                     | Required | Default | Example                             |
 |--------------|---------------------------------------------------------------------------------|----------|---------|-------------------------------------|
-| java-version | Java version used in the workflow                                               | Yes      | '11'    | '21'                                |
+| java-version | Java version used in the workflow                                               | No       | '11'    | '21'                                |
 | java-opts    | Java options used in the workflow                                               | No       | ""      | "-Xmx3000M -Dsbt.task.timings=true" |
 | sttp-native  | Flag indicating if the sttp-native should be included in the aggregate projects | No       | 0       | 1                                   |
 
@@ -157,7 +157,7 @@ This workflow is responsible for running MiMa (binary compatibility checker).
 ### Usage
 
 ```yaml
-  call-workflow-mima:
+  mima:
     uses: softwaremill/github-actions-workflows/.github/workflows/mima.yml@main
     with:
       java-version: '11'
@@ -168,7 +168,7 @@ This workflow is responsible for running MiMa (binary compatibility checker).
 
 | Name         | Description                       | Required | Default | Example                             |
 |--------------|-----------------------------------|----------|---------|-------------------------------------|
-| java-version | Java version used in the workflow | Yes      | '11'    | '21'                                |
+| java-version | Java version used in the workflow | No       | '11'    | '21'                                |
 | java-opts    | Java options used in the workflow | No       | ""      | "-Xmx3000M -Dsbt.task.timings=true" |
 
 ### List of repositories using this workflow
@@ -188,7 +188,7 @@ This workflow is responsible for building Scala projects.
 ### Usage
 
 ```yaml
-  call-workflow-build-scala:
+  build-scala:
     uses: softwaremill/github-actions-workflows/.github/workflows/build-scala.yml@main
     with:
       java-version: '11'
@@ -201,7 +201,7 @@ This workflow is responsible for building Scala projects.
 
 | Name             | Description                                                                     | Required | Default | Example                             |
 |------------------|---------------------------------------------------------------------------------|----------|---------|-------------------------------------|
-| java-version     | Java version used in the workflow                                               | Yes      | '11'    | '21'                                |
+| java-version     | Java version used in the workflow                                               | No       | '11'    | '21'                                |
 | java-opts        | Java options used in the workflow                                               | No       | ""      | "-Xmx3000M -Dsbt.task.timings=true" |
 | sttp-native      | Flag indicating if the sttp-native should be included in the aggregate projects | No       | 0       | 1                                   |
 | install-libidn11 | Flag indicating if the libidn11 library should be installed                     | No       | false   | true                                |
@@ -224,7 +224,7 @@ This workflow is responsible for generating test reports.
 ### Usage
 
 ```yaml
-  call-workflow-test-report:
+  test-report:
     uses: softwaremill/github-actions-workflows/.github/workflows/test-report.yml@main
 ```
 
@@ -243,7 +243,7 @@ This workflow is responsible for rebasing pull requests and adding a comment to 
 ### Usage
 
 ```yaml
-  call-workflow-rebase:
+  rebase:
     uses: softwaremill/github-actions-workflows/.github/workflows/rebase-cmd.yml@main
     secrets:
       repo-github-token: ${{ secrets.REPO_GITHUB_TOKEN }}
@@ -269,7 +269,7 @@ This workflow is responsible for dispatching rebase when it gets a command `/reb
 ### Usage
 
 ```yaml
-  call-workflow-rebase-cmd-dispatch:
+  rebase-cmd-dispatch:
     uses: softwaremill/github-actions-workflows/.github/workflows/rebase-cmd-dispatch.yml@main
     secrets:
       repo-github-token: ${{ secrets.REPO_GITHUB_TOKEN }}
