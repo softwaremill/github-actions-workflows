@@ -7,6 +7,10 @@ on:
         required: false
         type: string
         default: "11"
+      java-opts:
+        required: false
+        type: string
+        default: ""
     secrets:
       repo-github-token:
         required: true
@@ -15,7 +19,7 @@ jobs:
   scala-steward:
     runs-on: ubuntu-24.04
     env:
-      JAVA_OPTS: "-Xmx3500M"
+      JAVA_OPTS: ${{ inputs.java-opts }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4

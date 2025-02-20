@@ -17,7 +17,7 @@ on:
         default: 0
 
 jobs:
-  publish-release:
+  publish:
     name: Publish release
     runs-on: ubuntu-24.04
     env:
