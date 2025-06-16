@@ -4,10 +4,9 @@ on:
   workflow_call:
 
 jobs:
-  # `automerge` label is attached if there is exactly one file changed by steward and this file belongs to a
-  # whitelist specified by `labeler.yml`
+  # the labels are attached as specified in `.github/labeler.yml`
   label:
-    name: Attach automerge label
+    name: Attach labels
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v4
