@@ -13,12 +13,6 @@ jobs:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 2
-      # count number of files changed
-      - name: Count number of files changed
-        id: count-changed-files
-        run: |
-          N=$(git diff --name-only -r HEAD^1 HEAD | wc -w)
-          echo "changed_files_num=$N" >> $GITHUB_OUTPUT
       - name: Launch labeler
         uses: srvaroa/labeler@master
         env:
