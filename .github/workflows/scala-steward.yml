@@ -11,9 +11,9 @@ on:
         required: false
         type: string
         default: ""
+    secrets:
       github-token:
         required: true
-        type: string
 
 jobs:
   scala-steward:
@@ -37,4 +37,4 @@ jobs:
           author-email: scala-steward
           repo-config: .scala-steward.conf
           ignore-opts-files: false
-          github-token: ${{ inputs.github-token }}
+          github-token: ${{ secrets.github-token }}
