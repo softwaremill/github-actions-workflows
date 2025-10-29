@@ -28,9 +28,6 @@ on:
         type: boolean
         default: false
 
-permissions:
-  contents: write         # read required to checkout code, write required to upload artifacts
-
 jobs:
   ci:
     runs-on: ubuntu-24.04

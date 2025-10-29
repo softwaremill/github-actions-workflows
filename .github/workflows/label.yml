@@ -3,10 +3,6 @@ name: Label
 on:
   workflow_call:
 
-permissions:
-  contents: read         # Required to checkout code
-  pull-requests: write   # Required to add labels to PRs
-
 jobs:
   # the labels are attached as specified in `.github/labeler.yml`
   label:

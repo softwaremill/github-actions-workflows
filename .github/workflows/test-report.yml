@@ -3,10 +3,6 @@ name: Label
 on:
   workflow_call:
 
-permissions:
-  checks: write          # Required to create check runs for test reports
-  pull-requests: write   # Required to comment on PRs with test results
-
 jobs:
   report:
     runs-on: ubuntu-24.04

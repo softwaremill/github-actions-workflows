@@ -12,9 +12,6 @@ on:
         type: string
         default: ""
 
-permissions:
-  contents: read         # Required to checkout code and tags
-
 jobs:
   mima:
     runs-on: ubuntu-24.04

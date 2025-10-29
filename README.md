@@ -51,7 +51,11 @@ This workflow is responsible for merging pull requests that are ready to be merg
 
 ```yaml
   auto-merge:
+    # only for PRs by softwaremill-ci
+    if: github.event.pull_request.user.login == 'softwaremill-ci'
+    needs: [ ci, mima, label ]
     uses: softwaremill/github-actions-workflows/.github/workflows/auto-merge.yml@main
+    secrets: inherit
 ```
 
 ## [Label](./.github/workflows/label.yml)
@@ -63,7 +67,10 @@ steward and this file belongs to a whitelist specified by `labeler.yml`
 
 ```yaml
   label:
+    # only for PRs by softwaremill-ci
+    if: github.event.pull_request.user.login == 'softwaremill-ci'
     uses: softwaremill/github-actions-workflows/.github/workflows/label.yml@main
+    secrets: inherit
 ```
 
 ## [Scala Steward](./.github/workflows/scala-steward.yml)
@@ -73,10 +80,25 @@ This workflow is responsible for running Scala Steward.
 ### Usage
 
 ```yaml
+name: Scala Steward
+
+# This workflow will launch at 00:00 every day
+on:
+  schedule:
+    - cron: '0 0 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write        # Required to checkout and push changes
+  pull-requests: write   # Required to create PRs for dependency updates
+
+jobs:
   scala-steward:
     uses: softwaremill/github-actions-workflows/.github/workflows/scala-steward.yml@main
+    secrets:
+      github-token: ${{ secrets.GITHUB_TOKEN }}
     with:
-      java-version: '11'
+      java-version: '21'
 ```
 
 #### List of input params

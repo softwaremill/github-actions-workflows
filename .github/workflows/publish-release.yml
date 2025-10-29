@@ -16,9 +16,6 @@ on:
         type: number
         default: 0
 
-permissions:
-  contents: write        # Required to checkout and publish release notes
-
 jobs:
   publish:
     name: Publish release
