@@ -15,6 +15,10 @@ on:
       repo-github-token:
         required: true
 
+permissions:
+  contents: write        # Required to checkout and push changes
+  pull-requests: write   # Required to create PRs for dependency updates
+
 jobs:
   scala-steward:
     runs-on: ubuntu-24.04

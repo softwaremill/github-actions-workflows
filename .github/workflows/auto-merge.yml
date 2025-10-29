@@ -3,6 +3,10 @@ name: Auto merge
 on:
   workflow_call:
 
+permissions:
+  contents: write        # Required to merge PRs and push changes
+  pull-requests: write   # Required to update PR status, labels, and merge PRs
+
 jobs:
   auto-merge:
     name: Auto merge
