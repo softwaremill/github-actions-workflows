@@ -77,8 +77,6 @@ This workflow is responsible for running Scala Steward.
     uses: softwaremill/github-actions-workflows/.github/workflows/scala-steward.yml@main
     with:
       java-version: '11'
-    secrets:
-      repo-github-token: ${{secrets.REPO_GITHUB_TOKEN}}
 ```
 
 #### List of input params
@@ -87,12 +85,6 @@ This workflow is responsible for running Scala Steward.
 |--------------|-----------------------------------|----------|---------|-------------|
 | java-version | Java version used in the workflow | No       | '11'    | '21'        |
 | java-opts    | Java options used in the workflow | No       | ""      | "-Xmx3000M" |
-
-#### List of secrets
-
-| Name              | Description |
-|-------------------|-------------|
-| repo-github-token | -           |
 
 ## [Publish Release](./.github/workflows/publish-release.yml)
 
@@ -208,9 +200,9 @@ The following repositories use one or more reusable workflows from this reposito
 | [actions/checkout](https://github.com/actions/checkout)                                             | v4      | checks-out your repository under $GITHUB_WORKSPACE                     |
 | [actions/setup-java](https://github.com/actions/setup-java)                                         | v4      | downloads Java, configures runners, caches dependencies                |
 | [actions/upload-artifact](https://github.com/actions/upload-artifact)                               | v4      | uploads artifacts from the workflow's workspace to be downloaded later |
-| [dorny/test-reporter](https://github.com/dorny/test-reporter)                                       | v1      | generates test reports and uploads them as workflow artifacts.         |
+| [dorny/test-reporter](https://github.com/dorny/test-reporter)                                       | v2      | generates test reports and uploads them as workflow artifacts.         |
 | [pascalgn/automerge-action](https://github.com/pascalgn/automerge-action)                           | v0.16.4 | automatically merges PRs with `automerge` label                        |
-| [release-drafter/release-drafter](https://github.com/release-drafter/release-drafter)               | v5      | drafts release notes based on merged pull requests                     |
+| [release-drafter/release-drafter](https://github.com/release-drafter/release-drafter)               | v6      | drafts release notes based on merged pull requests                     |
 | [sbt/setup-sbt](https://github.com/sbt/setup-sbt)                                                   | v1      | enables `sbt` runner                                                   |
 | [scala-steward-org/scala-steward-action](https://github.com/scala-steward-org/scala-steward-action) | v2      | automates dependency updates for Scala projects                        |
 | [srvaroa/labeler](https://github.com/srvaroa/labeler)                                               | master  | manages labels for both Pull Requests and Issues                       | 
