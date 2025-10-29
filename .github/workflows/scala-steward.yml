@@ -12,11 +12,11 @@ on:
         type: string
         default: ""
     secrets:
+      # for some reason, using a `secrets: inherited` github token with write permission on `contents` 
+      # and `pull-requests` is not working (leads to errors that there are no `workflow` permissions); 
+      # hence, it needs to be passed manually
       github-token:
         required: true
-
-permissions:
-  contents: read # cloning the repo; writing is handled by the passed github-token
 
 jobs:
   scala-steward:
