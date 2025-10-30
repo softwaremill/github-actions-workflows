@@ -96,7 +96,7 @@ jobs:
   scala-steward:
     uses: softwaremill/github-actions-workflows/.github/workflows/scala-steward.yml@main
     secrets:
-      github-token: ${{ secrets.GITHUB_TOKEN }}
+      github-token: ${{ secrets.SOFTWAREMILL_CI_PR_TOKEN }}
     with:
       java-version: '21'
 ```
