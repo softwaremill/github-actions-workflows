@@ -197,24 +197,6 @@ This workflow is responsible for generating test reports.
 - All workflows using sbt with ubuntu 24.04 need to add `setup-sbt` step because sbt was removed from the image as
   described [here](https://github.com/sbt/setup-sbt?tab=readme-ov-file#december-2024).
 
-## Repositories using these workflows
-
-The following repositories use one or more reusable workflows from this repository:
-
-- [adopt-tapir](https://github.com/softwaremill/adopt-tapir)
-- [bootzooka](https://github.com/softwaremill/bootzooka)
-- [kmq](https://github.com/softwaremill/kmq)
-- [macwire](https://github.com/softwaremill/macwire)
-- [magnolia](https://github.com/softwaremill/magnolia)
-- [ox](https://github.com/softwaremill/ox)
-- [retry](https://github.com/softwaremill/retry)
-- [sttp](https://github.com/softwaremill/sttp)
-- [sttp-apispec](https://github.com/softwaremill/sttp-apispec)
-- [sttp-model](https://github.com/softwaremill/sttp-model)
-- [sttp-openai](https://github.com/softwaremill/sttp-openai)
-- [sttp-shared](https://github.com/softwaremill/sttp-shared)
-- [tapir](https://github.com/softwaremill/tapir)
-
 ## List of actions used in workflows
 
 | action                                                                                              | version | description                                                            |
