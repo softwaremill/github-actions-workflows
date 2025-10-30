@@ -12,9 +12,9 @@ on:
         type: string
         default: ""
     secrets:
-      # for some reason, using a `secrets: inherited` github token with write permission on `contents` 
-      # and `pull-requests` is not working (leads to errors that there are no `workflow` permissions); 
-      # hence, it needs to be passed manually
+      # this needs to be a personal access token for a service account, as using the default GITHUB_TOKEN
+      # doesn't trigger actions, when a PR is created (this is a known limitation of GitHub Actions, and
+      # using a PAT is a documented work-around)
       github-token:
         required: true
 
