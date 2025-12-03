@@ -19,7 +19,7 @@ jobs:
       JAVA_OPTS: ${{ inputs.java-opts }}
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           fetch-depth: 0 # checkout tags so that dynver works properly (we need the version for MiMa)
       - name: Set up JDK
