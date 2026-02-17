@@ -2,6 +2,18 @@ name: Auto merge
 
 on:
   workflow_call:
+    secrets:
+      github-token:
+        required: false
+        # Merges with the default GITHUB_TOKEN don't trigger subsequent workflows (push
+        # events) due to GitHub's anti-recursion policy. Repos that need downstream workflows
+        # to run after auto-merge (e.g. deploy on push to main) should pass a PAT here.
+        # Note: `secrets: inherit` won't work for this — the calling workflow must explicitly
+        # map its repo secret to this input, because no repo secret is literally named
+        # `github-token`. Example:
+        #   secrets:
+        #     github-token: ${{ secrets.SOFTWAREMILL_CI_PR_TOKEN }}
+        description: "Token for merging. Use a PAT to trigger subsequent workflows (e.g. deploy). Defaults to GITHUB_TOKEN."
 
 jobs:
   auto-merge:
@@ -12,5 +24,5 @@ jobs:
         name: automerge
         uses: "pascalgn/automerge-action@7961b8b5eec56cc088c140b56d864285eabd3f67" # v0.16.4
         env:
-          GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
+          GITHUB_TOKEN: "${{ secrets.github-token || secrets.GITHUB_TOKEN }}"
           MERGE_METHOD: "squash"
