@@ -9,7 +9,7 @@ jobs:
     # If the workflow run was skipped or cancelled this action would fail, generating a test report is unnecessary.
     if: ${{ github.event.workflow_run.conclusion == 'success' || github.event.workflow_run.conclusion == 'failure' }}
     steps:
-      - uses: dorny/test-reporter@fe45e9537387dac839af0d33ba56eed8e24189e8 # v2, specifically v2.3.0
+      - uses: dorny/test-reporter@3d76b34a4535afbd0600d347b09a6ee5deb3ed7f # v2, specifically v2.6.0
         with:
           artifact: '/tests-results(.*)/'
           name: 'Test report for $1'
