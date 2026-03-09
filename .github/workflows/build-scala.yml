@@ -43,7 +43,7 @@ jobs:
         distribution: 'temurin'
         java-version: ${{inputs.java-version}}
         cache: 'sbt'
-    - uses: sbt/setup-sbt@3e125ece5c3e5248e18da9ed8d2cce3d335ec8dd # v1, specifically v1.1.14
+    - uses: sbt/setup-sbt@6bec67c98f542b9e17369bfca0ec822ac1363194 # v1, specifically v1.1.19
     - name: Install libidn11-dev
       if: ${{ inputs.install-libidn11 }}
       run: sudo apt-get install libidn11-dev
