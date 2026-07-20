@@ -77,6 +77,8 @@ steward and this file belongs to a whitelist specified by `labeler.yml`
 
 This workflow is responsible for running Scala Steward.
 
+It applies a central default config ([`default.scala-steward.conf`](./default.scala-steward.conf)) that enforces a supply-chain cooldown (`updates.cooldown.minimumAge = "3 days"`), so new dependency versions are not adopted until they have matured. A repository's own `.scala-steward.conf` (pins, ignores, per-dependency overrides) is still applied on top and takes precedence per field.
+
 ### Usage
 
 ```yaml
