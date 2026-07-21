@@ -43,6 +43,12 @@ If you use a workflow from this repository, please add its usage to the correspo
 6. [Build Scala](#build-scala)
 7. [Test Report](#test-report)
 
+## List of org-wide workflows
+
+These run and live in this repository (they are not called via `uses:`); they act across the organisation.
+
+1. [Dependabot Cooldown](#dependabot-cooldown)
+
 ## [Auto Merge](./.github/workflows/auto-merge.yml)
 
 This workflow is responsible for merging pull requests that are ready to be merged.
@@ -193,6 +199,57 @@ This workflow is responsible for generating test reports.
   test-report:
     uses: softwaremill/github-actions-workflows/.github/workflows/test-report.yml@main
 ```
+
+## [Dependabot Cooldown](./.github/workflows/dependabot-cooldown.yml)
+
+A central, self-maintaining job that lives and runs in this repository and patches Dependabot configs across the org.
+New dependency versions are held for `cooldown-days` days before Dependabot proposes a *version* update, so a
+compromised release has time to be detected before adoption. Security updates (published GHSA/CVE advisories) bypass
+the cooldown and are unaffected.
+
+Dependabot has no org-wide / remote config, so a `cooldown` block must live statically in each repo's file. Instead of
+maintaining a hand-written repo list (which drifts) or asking every repo to opt in with its own caller workflow, this
+workflow **discovers** the target set at run time and **fans out** over it:
+
+1. **discover** — enumerates the repos the GitHub App is installed on, keeps the active (non-archived, non-fork) ones
+   that actually contain a Dependabot config, minus the `EXCLUDE` policy list, and emits a matrix.
+2. **patch** — one matrix job per discovered repo: mints a short-lived token scoped to just that repo, patches
+   `cooldown.default-days` on every `updates:` entry (surgically, preserving comments and key order), and opens a PR.
+
+The `cooldown-days` value is a single central knob: it defaults to `3`, and can be set ad-hoc via `workflow_dispatch`.
+The patch is strict — it overwrites any existing `default-days`, so the central policy stays the source of truth. PRs
+are opened with the App token, so the target repo's own CI runs on the cooldown PR (unlike `GITHUB_TOKEN`, which cannot
+trigger downstream workflows). PRs are left for review and are not auto-merged.
+
+### Prerequisites (one-time, org admin)
+
+Register a GitHub App in the `softwaremill` org and install it on the repositories that should carry the cooldown:
+
+- **Permissions:** `contents: write`, `pull-requests: write`, `metadata: read`.
+- **Installation:** the app's installed repositories are the candidate universe for discovery — install it org-wide (the
+  file-presence filter scopes it) or only on the repos you want covered.
+- Store the app's **client ID** in the repository/org variable `DEPENDABOT_COOLDOWN_APP_CLIENT_ID` and its **private key**
+  in the secret `DEPENDABOT_COOLDOWN_APP_KEY`.
+
+The App private key is the only standing secret; every runtime token is repo-scoped and expires in ~1 hour.
+
+### Usage
+
+Nothing to add to individual repositories. The workflow runs on a weekly schedule and can be triggered manually:
+
+- **Retune the whole fleet:** `workflow_dispatch` with `cooldown-days: '7'`.
+- **Targeted re-run:** `workflow_dispatch` with `repos: 'tapir bootzooka'` to patch a specific subset instead of running
+  discovery.
+- **Exclude a repo from policy:** add its name to the `EXCLUDE` env list in the workflow.
+
+If a discovered repository has no `.github/dependabot.yml` (or `.yaml`), that matrix job is a no-op.
+
+#### List of dispatch inputs
+
+| Name          | Description                                                          | Required | Default | Example          |
+|---------------|----------------------------------------------------------------------|----------|---------|------------------|
+| cooldown-days | Number of days a new version is held before a bump PR                | No       | '3'     | '7'              |
+| repos         | Explicit repo list to patch instead of discovery (comma/space-sep.)  | No       | ''      | 'tapir bootzooka'|
 
 ## Remarks
 

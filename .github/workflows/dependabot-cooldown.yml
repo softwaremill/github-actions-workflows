@@ -1,0 +1,197 @@
+name: Dependabot Cooldown
+
+# Central, self-maintaining supply-chain cooldown for Dependabot across the org.
+#
+# Dependabot has no org-wide / remote config, so a `cooldown` block must live statically
+# in each repo's committed `.github/dependabot.yml(.yaml)`. Rather than maintain a hand-written
+# repo list (which drifts) or ask every repo to opt in with a caller workflow (25+ files to
+# keep in sync), this workflow DISCOVERS the target set at run time and fans out over it:
+#
+#   1. `discover` — enumerate the repos this GitHub App is installed on, keep the active
+#      (non-archived, non-fork) ones that actually contain a Dependabot config, minus an
+#      explicit policy exclude list. Emits a matrix.
+#   2. `patch`    — one matrix job per discovered repo: mint a SHORT-LIVED token scoped to
+#      just that repo, patch `cooldown.default-days` on every `updates:` entry (surgically,
+#      preserving comments and key order), and open a PR for review.
+#
+# Credentials: a GitHub App with `contents: write` + `pull-requests: write`, installed on the
+# target repos. The private key is the only standing secret; every runtime token is repo-scoped
+# and expires in ~1 hour. Because PRs are opened with an App token (not GITHUB_TOKEN), the
+# target repo's own CI runs on the cooldown PR.
+
+on:
+  # Re-apply weekly so newly added Dependabot configs are picked up and any drift is corrected.
+  schedule:
+    - cron: "0 6 * * 1"
+  workflow_dispatch:
+    inputs:
+      cooldown-days:
+        description: "Cooldown in days. Leave empty to use the central default (3)."
+        required: false
+        type: string
+      repos:
+        description: "Optional comma/space-separated repo list to patch instead of discovery (e.g. for a targeted re-run)."
+        required: false
+        type: string
+
+# GITHUB_TOKEN is unused — all repo access goes through the App token minted below.
+permissions: {}
+
+env:
+  COOLDOWN_DAYS: ${{ inputs.cooldown-days || '3' }}
+  # Policy exclude list (space-separated repo names). Discovery finds every active repo with a
+  # Dependabot config; list here any that are out of policy scope (throwaway experiments, toy
+  # bots, demos). Archived repos and forks are already dropped automatically.
+  EXCLUDE: ""
+
+jobs:
+  discover:
+    name: Discover target repos
+    runs-on: ubuntu-24.04
+    outputs:
+      repos: ${{ steps.list.outputs.repos }}
+    steps:
+      - name: Generate org-scoped App token
+        id: app-token
+        uses: actions/create-github-app-token@bcd2ba49218906704ab6c1aa796996da409d3eb1 # v3.2.0
+        with:
+          client-id: ${{ vars.DEPENDABOT_COOLDOWN_APP_CLIENT_ID }}
+          private-key: ${{ secrets.DEPENDABOT_COOLDOWN_APP_KEY }}
+          owner: softwaremill
+
+      - name: List repos with a Dependabot config
+        id: list
+        env:
+          GH_TOKEN: ${{ steps.app-token.outputs.token }}
+          OVERRIDE: ${{ inputs.repos }}
+        run: |
+          set -euo pipefail
+
+          if [ -n "${OVERRIDE:-}" ]; then
+            # Manual override: patch exactly these repos, skip discovery.
+            candidates=$(echo "$OVERRIDE" | tr ', ' '\n' | sed '/^[[:space:]]*$/d')
+          else
+            # Candidate universe = repos this App installation can see, active and first-party.
+            # (Enumerating the installation is deterministic — no code-search index lag.)
+            candidates=$(gh api --paginate /installation/repositories \
+              --jq '.repositories[] | select(.archived == false and .fork == false) | .name')
+          fi
+
+          keep=()
+          for repo in $candidates; do
+            # Apply the policy exclude list.
+            case " $EXCLUDE " in *" $repo "*) echo "skip (excluded): $repo"; continue;; esac
+
+            # Keep only repos that actually carry a Dependabot config on the default branch.
+            if gh api "repos/softwaremill/$repo/contents/.github/dependabot.yml"  >/dev/null 2>&1 \
+               || gh api "repos/softwaremill/$repo/contents/.github/dependabot.yaml" >/dev/null 2>&1; then
+              echo "target: $repo"
+              keep+=("$repo")
+            fi
+          done
+
+          # Emit a JSON array for the matrix (empty array if nothing matched).
+          printf '%s\n' "${keep[@]:-}" | sed '/^$/d' | jq -R . | jq -sc . > repos.json
+          echo "repos=$(cat repos.json)" >> "$GITHUB_OUTPUT"
+          echo "Discovered $(jq 'length' repos.json) repo(s): $(cat repos.json)"
+
+  patch:
+    name: Patch ${{ matrix.repo }}
+    needs: discover
+    if: needs.discover.outputs.repos != '[]'
+    runs-on: ubuntu-24.04
+    strategy:
+      fail-fast: false
+      matrix:
+        repo: ${{ fromJSON(needs.discover.outputs.repos) }}
+    env:
+      BRANCH: chore/dependabot-cooldown
+    steps:
+      - name: Generate repo-scoped App token
+        id: app-token
+        uses: actions/create-github-app-token@bcd2ba49218906704ab6c1aa796996da409d3eb1 # v3.2.0
+        with:
+          client-id: ${{ vars.DEPENDABOT_COOLDOWN_APP_CLIENT_ID }}
+          private-key: ${{ secrets.DEPENDABOT_COOLDOWN_APP_KEY }}
+          owner: softwaremill
+          repositories: ${{ matrix.repo }}
+
+      - name: Checkout ${{ matrix.repo }}
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+        with:
+          repository: softwaremill/${{ matrix.repo }}
+          token: ${{ steps.app-token.outputs.token }}
+          fetch-depth: 1
+
+      - name: Patch dependabot cooldown
+        id: patch
+        run: |
+          set -euo pipefail
+
+          FILE=""
+          if [ -f .github/dependabot.yml ]; then
+            FILE=.github/dependabot.yml
+          elif [ -f .github/dependabot.yaml ]; then
+            FILE=.github/dependabot.yaml
+          fi
+
+          if [ -z "$FILE" ]; then
+            echo "No .github/dependabot.yml(.yaml) found — nothing to do."
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          echo "Found $FILE"
+
+          # yq v4 (mikefarah) is preinstalled on ubuntu-24.04. `env(...)` type-parses,
+          # so a numeric value is written as a YAML integer (Dependabot expects an int).
+          # Strict overwrite of `default-days` on every `updates:` entry:
+          # central policy is the single tunable knob and deliberately wins over any local
+          # hand-set value. Sibling cooldown keys (semver-*-days, include, exclude) are left
+          # untouched — the patch is surgical.
+          DAYS="$COOLDOWN_DAYS" yq -i '.updates[].cooldown.default-days = env(DAYS)' "$FILE"
+
+          if git diff --quiet -- "$FILE"; then
+            echo "Cooldown already at $COOLDOWN_DAYS days on every entry — no change."
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+            echo "file=$FILE" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Open pull request
+        if: steps.patch.outputs.changed == 'true'
+        env:
+          GH_TOKEN: ${{ steps.app-token.outputs.token }}
+          FILE: ${{ steps.patch.outputs.file }}
+        run: |
+          set -euo pipefail
+
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+          BASE="$(git rev-parse --abbrev-ref HEAD)"
+
+          # Fixed branch, force-pushed: a re-run updates the existing PR in place
+          # instead of opening a duplicate.
+          git switch -C "$BRANCH"
+          git add "$FILE"
+          git commit -m "Set Dependabot cooldown to ${COOLDOWN_DAYS} days"
+          git push -f origin "$BRANCH"
+
+          TITLE="Set Dependabot cooldown to ${COOLDOWN_DAYS} days"
+          BODY="$(cat <<EOF
+          Enforces the central supply-chain cooldown on \`${FILE}\` (\`cooldown.default-days = ${COOLDOWN_DAYS}\`) on every \`updates:\` entry.
+
+          New dependency versions are held for this many days before Dependabot proposes a version update, so a compromised release has time to be detected. Security updates (published GHSA/CVE advisories) bypass the cooldown and are unaffected.
+
+          Opened by the central [\`dependabot-cooldown\`](https://github.com/softwaremill/github-actions-workflows/blob/main/.github/workflows/dependabot-cooldown.yml) workflow.
+          EOF
+          )"
+
+          # Create only if no open PR already tracks this branch; the force-push above
+          # already refreshed an existing one.
+          if [ -z "$(gh pr list --head "$BRANCH" --state open --json number --jq '.[].number')" ]; then
+            gh pr create --base "$BASE" --head "$BRANCH" --title "$TITLE" --body "$BODY"
+          else
+            echo "Open PR for $BRANCH already exists — updated it via force-push."
+          fi
