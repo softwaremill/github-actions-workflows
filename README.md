@@ -228,7 +228,7 @@ Register a GitHub App in the `softwaremill` org and install it on the repositori
 - **Permissions:** `contents: write`, `pull-requests: write`, `metadata: read`.
 - **Installation:** the app's installed repositories are the candidate universe for discovery — install it org-wide (the
   file-presence filter scopes it) or only on the repos you want covered.
-- Store the app's **client ID** in the repository/org variable `DEPENDABOT_COOLDOWN_APP_CLIENT_ID` and its **private key**
+- Store the app's **client ID** in the secret `DEPENDABOT_COOLDOWN_APP_CLIENT_ID` and its **private key**
   in the secret `DEPENDABOT_COOLDOWN_APP_KEY`.
 
 The App private key is the only standing secret; every runtime token is repo-scoped and expires in ~1 hour.
