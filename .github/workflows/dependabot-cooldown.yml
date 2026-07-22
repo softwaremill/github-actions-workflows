@@ -42,14 +42,7 @@ env:
   # Policy exclude list (space-separated repo names). Discovery finds every active repo with a
   # Dependabot config; list here any that are out of policy scope (throwaway experiments, toy
   # bots, demos). Archived repos and forks are already dropped automatically.
-  #
-  # Initial rollout: scoped to this repo (github-actions-workflows) only — every other repo
-  # currently discovered is excluded. Trim this list to widen coverage.
-  EXCLUDE: >-
-    tapir bootzooka adopt-tapir sttp-ai scalatimes-app quicklens livestub
-    paintscript-render-server janusz-backend wozny-the-bot agent-visualisation
-    finanse-ui devposts paintscript maven-badges finanse2 okapi sml-faces-quiz
-    janusz-the-bot
+  EXCLUDE: ""
 
 jobs:
   discover:
