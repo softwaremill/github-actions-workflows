@@ -26,6 +26,13 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v6
+      - name: Checkout central Scala Steward config
+        uses: actions/checkout@v6
+        with:
+          repository: softwaremill/github-actions-workflows
+          path: .steward-central
+          sparse-checkout: default.scala-steward.conf
+          sparse-checkout-cone-mode: false
       - name: Set up JDK
         uses: actions/setup-java@v5
         with:
@@ -38,6 +45,6 @@ jobs:
         with:
           author-name: scala-steward
           author-email: scala-steward
-          repo-config: .scala-steward.conf
+          repo-config: .steward-central/default.scala-steward.conf
           ignore-opts-files: false
           github-token: ${{ secrets.github-token }}
