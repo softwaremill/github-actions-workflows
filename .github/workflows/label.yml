@@ -13,6 +13,6 @@ jobs:
         with:
           fetch-depth: 2
       - name: Launch labeler
-        uses: srvaroa/labeler@b4493338d7929ddc4ffc95fadf6f28c73bae2e90 # master at the time of pinning
+        uses: srvaroa/labeler@075ed09ed89dbe3214feeb50731ff61f9ef75cf7 # master at the time of pinning
         env:
           GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
