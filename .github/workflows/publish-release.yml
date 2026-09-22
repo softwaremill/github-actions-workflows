@@ -6,7 +6,7 @@ on:
       java-version:
         required: false
         type: string
-        default: "11"
+        default: "17"
       java-opts:
         required: false
         type: string
