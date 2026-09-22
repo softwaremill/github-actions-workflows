@@ -113,7 +113,7 @@ jobs:
 
 | Name         | Description                       | Required | Default | Example     |
 |--------------|-----------------------------------|----------|---------|-------------|
-| java-version | Java version used in the workflow | No       | '11'    | '21'        |
+| java-version | Java version used in the workflow | No       | '17'    | '21'        |
 | java-opts    | Java options used in the workflow | No       | ""      | "-Xmx3000M" |
 
 ## [Publish Release](./.github/workflows/publish-release.yml)
@@ -128,7 +128,7 @@ It uses multiple secrets so clause `secrets: inherit` has to be added to the wor
     uses: softwaremill/github-actions-workflows/.github/workflows/publish-release.yml@main
     secrets: inherit
     with:
-      java-version: '11'
+      java-version: '21'
       java-opts: "-Xmx3000M -Dsbt.task.timings=true"
       sttp-native: 1
 ```
@@ -137,7 +137,7 @@ It uses multiple secrets so clause `secrets: inherit` has to be added to the wor
 
 | Name         | Description                                                                     | Required | Default | Example                             |
 |--------------|---------------------------------------------------------------------------------|----------|---------|-------------------------------------|
-| java-version | Java version used in the workflow                                               | No       | '11'    | '21'                                |
+| java-version | Java version used in the workflow                                               | No       | '17'    | '21'                                |
 | java-opts    | Java options used in the workflow                                               | No       | ""      | "-Xmx3000M -Dsbt.task.timings=true" |
 | sttp-native  | Flag indicating if the sttp-native should be included in the aggregate projects | No       | 0       | 1                                   |
 
@@ -151,7 +151,7 @@ This workflow is responsible for running MiMa (binary compatibility checker).
   mima:
     uses: softwaremill/github-actions-workflows/.github/workflows/mima.yml@main
     with:
-      java-version: '11'
+      java-version: '21'
       java-opts: "-Xmx4G"
 ```
 
@@ -159,7 +159,7 @@ This workflow is responsible for running MiMa (binary compatibility checker).
 
 | Name         | Description                       | Required | Default | Example                             |
 |--------------|-----------------------------------|----------|---------|-------------------------------------|
-| java-version | Java version used in the workflow | No       | '11'    | '21'                                |
+| java-version | Java version used in the workflow | No       | '17'    | '21'                                |
 | java-opts    | Java options used in the workflow | No       | ""      | "-Xmx3000M -Dsbt.task.timings=true" |
 
 ## [Build Scala](./.github/workflows/build-scala.yml)
@@ -172,7 +172,7 @@ This workflow is responsible for building Scala projects.
   build-scala:
     uses: softwaremill/github-actions-workflows/.github/workflows/build-scala.yml@main
     with:
-      java-version: '11'
+      java-version: '21'
       java-opts: '-Xmx3000M -Dsbt.task.timings=true'
       sttp-native: 1
       install-libidn11: true
@@ -182,7 +182,7 @@ This workflow is responsible for building Scala projects.
 
 | Name                  | Description                                                                     | Required | Default | Example                             |
 |-----------------------|---------------------------------------------------------------------------------|----------|---------|-------------------------------------|
-| java-version          | Java version used in the workflow                                               | No       | '11'    | '21'                                |
+| java-version          | Java version used in the workflow                                               | No       | '17'    | '21'                                |
 | java-opts             | Java options used in the workflow                                               | No       | ""      | "-Xmx3000M -Dsbt.task.timings=true" |
 | sttp-native           | Flag indicating if the sttp-native should be included in the aggregate projects | No       | 0       | 1                                   |
 | install-libidn11      | Flag indicating if the libidn11 library should be installed                     | No       | false   | true                                |
