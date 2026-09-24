@@ -11,6 +11,10 @@ on:
         required: false
         type: string
         default: ""
+      sbt-runner-version:
+        required: false
+        type: string
+        default: "2.0.9"
     secrets:
       # this needs to be a personal access token for a service account, as using the default GITHUB_TOKEN
       # doesn't trigger actions, when a PR is created (this is a known limitation of GitHub Actions, and
@@ -39,7 +43,9 @@ jobs:
           distribution: 'temurin'
           java-version: ${{ inputs.java-version }}
           cache: 'sbt'
-      - uses: sbt/setup-sbt@3e125ece5c3e5248e18da9ed8d2cce3d335ec8dd # v1, specifically v1.1.14
+      - uses: sbt/setup-sbt@ce95da69b39609ea153bad087708da5f37366897 # v1, specifically v1.5.10
+        with:
+          sbt-runner-version: ${{ inputs.sbt-runner-version }}
       - name: Launch Scala Steward
         uses: scala-steward-org/scala-steward-action@5bbb0a3f32b42774f8ba1ed18c29db5d915d2200 # v2, specifically v2.80.0
         with:
