@@ -40,9 +40,9 @@ jobs:
         with:
           sbt-runner-version: ${{ inputs.sbt-runner-version }}
       - name: Compile
-        run: sbt compile
+        run: sbt "compile ; shutdown"
       - name: Publish artifacts
-        run: sbt --server ci-release
+        run: sbt ci-release
         env:
           PGP_PASSPHRASE: ${{ secrets.PGP_PASSPHRASE }}
           PGP_SECRET: ${{ secrets.PGP_SECRET }}
