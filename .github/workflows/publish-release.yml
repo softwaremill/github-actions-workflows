@@ -14,7 +14,7 @@ on:
       sbt-runner-version:
         required: false
         type: string
-        default: "2.0.9"
+        default: "2.0.10"
       sttp-native:
         required: false
         type: number

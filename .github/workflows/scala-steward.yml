@@ -14,7 +14,7 @@ on:
       sbt-runner-version:
         required: false
         type: string
-        default: "2.0.9"
+        default: "2.0.10"
     secrets:
       # this needs to be a personal access token for a service account, as using the default GITHUB_TOKEN
       # doesn't trigger actions, when a PR is created (this is a known limitation of GitHub Actions, and
